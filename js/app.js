@@ -1,11 +1,12 @@
 let page = page => {
   let pages = [
-    "section_main",
-    "section_customers",
-    "section_customergroups",
-    "section_restaurants",
-    "section_orders",
-    "section_about"
+    "page_main",
+    "page_customers",
+    "page_edit_customer",
+    "page_customergroups",
+    "page_restaurants",
+    "page_orders",
+    "page_about"
   ];
   for (let i = 0; i < pages.length; i++) {
     document.getElementById(pages[i]).classList.add("hidden");
@@ -17,11 +18,11 @@ document.addEventListener("touchstart", function() {}, false); // needed for ios
 
 /* -- TABULATOR JS FUNCTIONS -- */
 
-//Build Tabulator
+//Build Tabulator Tables
 var customerresults = new Tabulator("#customer_results", {
   rowClick: function(e, row) {
     getCustomer(row.getCell("id").getValue());
-    document.querySelector("#section_add_customers").classList.toggle("hidden");
+    page("page_edit_customer");
   },
   layout: "fitColumns",
   placeholder: "No Data Set",
@@ -32,9 +33,80 @@ var customerresults = new Tabulator("#customer_results", {
       sorter: "string",
       visible: false
     },
-    { title: "First", field: "f_name", sorter: "string" },
-    { title: "Last", field: "l_name", sorter: "string" },
-    { title: "Nickname", field: "nickname", sorter: "string" }
+    {
+      title: "First",
+      field: "f_name",
+      sorter: "string",
+      headerFilter: "input",
+      headerFilterPlaceholder: "Filter",
+      headerFilterFunc: "%"
+    },
+    {
+      title: "Last",
+      field: "l_name",
+      sorter: "string",
+      headerFilter: "input",
+      headerFilterPlaceholder: "Filter",
+      headerFilterFunc: "%"
+    },
+    {
+      title: "Nickname",
+      field: "nickname",
+      sorter: "string",
+      headerFilter: "input",
+      headerFilterPlaceholder: "Filter",
+      headerFilterFunc: "%"
+    }
+  ]
+});
+
+var customergroups_results = new Tabulator("#customergroups_results", {
+  rowClick: function(e, row) {
+    getCustomerGroup(row.getCell("id").getValue());
+    page("page_edit_customer");
+  },
+  layout: "fitColumns",
+  placeholder: "No Data Set",
+  columns: [
+    {
+      title: "ID",
+      field: "id",
+      sorter: "string",
+      visible: false
+    },
+    {
+      title: "Group Name",
+      field: "name",
+      sorter: "string",
+      headerFilter: "input",
+      headerFilterPlaceholder: "Filter",
+      headerFilterFunc: "%"
+    }
+  ]
+});
+
+var restaurants_results = new Tabulator("#restaurants_results", {
+  rowClick: function(e, row) {
+    getRestaurant(row.getCell("id").getValue());
+    page("page_edit_customer");
+  },
+  layout: "fitColumns",
+  placeholder: "No Data Set",
+  columns: [
+    {
+      title: "ID",
+      field: "id",
+      sorter: "string",
+      visible: false
+    },
+    {
+      title: "Restaurant Name",
+      field: "name",
+      sorter: "string",
+      headerFilter: "input",
+      headerFilterPlaceholder: "Filter",
+      headerFilterFunc: "%"
+    }
   ]
 });
 
@@ -48,31 +120,30 @@ document.addEventListener("click", function(e) {
   }
 
   if (e.target && e.target.matches(".btn_main_screen")) {
-    hideSection();
-    page("section_main");
+    page("page_main");
   }
 
   if (e.target && e.target.matches(".btn_customers")) {
-    page("section_customers");
+    page("page_customers");
     getCustomers();
   }
 
   if (e.target && e.target.matches(".btn_customergroups")) {
-    page("section_customergroups");
+    page("page_customergroups");
     getCustomerGroups();
   }
 
   if (e.target && e.target.matches(".btn_restaurants")) {
-    page("section_restaurants");
+    page("page_restaurants");
     getRestaurants();
   }
 
   if (e.target && e.target.matches(".btn_orders")) {
-    page("section_orders");
+    page("page_orders");
   }
 
   if (e.target && e.target.matches(".btn_about")) {
-    page("section_about");
+    page("page_about");
   }
 
   if (e.target && e.target.matches("#add_customer")) {
@@ -93,18 +164,11 @@ document.addEventListener("click", function(e) {
   }
 
   if (e.target && e.target.matches("#btn_return_to_customers")) {
-    document
-      .querySelector("#section_edit_customers")
-      .classList.toggle("hidden");
-    document.querySelector("#section_main").classList.toggle("hidden");
+    page("page_customers");
   }
 });
 
 /* -- OTHER FUNCTIONS -- */
-
-let toggleSection = (html_section, css_class) => {
-  document.querySelector(html_section).classList.toggle(css_class);
-};
 
 /* -- XHR GET FUNCTIONS -- */
 
@@ -144,7 +208,7 @@ let getCustomer = id => {
         "hidden";
       let data = xmlhttp.responseText;
 
-      document.querySelector("#section_edit_customers").innerHTML = data;
+      document.querySelector("#page_edit_customer").innerHTML = data;
     }
   };
   let timestamp = Date.now();
@@ -166,7 +230,7 @@ let getRestaurants = () => {
         "hidden";
       let data = xmlhttp.responseText;
 
-      document.querySelector("#restaurants_results").innerHTML = data;
+      restaurants_results.setData(data);
     }
   };
   let timestamp = Date.now();
@@ -190,11 +254,34 @@ let getCustomerGroups = () => {
       ).style.visibility = "hidden";
       let data = xmlhttp.responseText;
 
-      document.querySelector("#customergroups_results").innerHTML = data;
+      customergroups_results.setData(data);
+      //document.querySelector("#customergroups_results").innerHTML = data;
     }
   };
   let timestamp = Date.now();
   let link = "./php/getcustomergroups.php?timestamp=" + timestamp;
+  xmlhttp.open("GET", link, true);
+  xmlhttp.send(null);
+};
+
+let getCustomerGroup = id => {
+  let xmlhttp;
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState < 4) {
+      document.querySelector("#customergroup_loading_status").style.visibility =
+        "visible";
+    }
+    if (xmlhttp.readyState == 4) {
+      document.querySelector("#customergroup_loading_status").style.visibility =
+        "hidden";
+      let data = xmlhttp.responseText;
+
+      document.querySelector("#page_edit_customergroup").innerHTML = data;
+    }
+  };
+  let timestamp = Date.now();
+  let link = "./php/getcustomer.php?id=" + id + "&timestamp=" + timestamp;
   xmlhttp.open("GET", link, true);
   xmlhttp.send(null);
 };

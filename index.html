@@ -26,7 +26,7 @@
       <!-- start section outer -->
       <section id="section_main_outer">
         <!-- start section main -->
-        <section id="section_main" class="sb">
+        <section id="page_main" class="sb">
           <div class="btn btn_customers">
             <i class="fas fa-users btn_customers"></i><br />
             Customers
@@ -51,46 +51,32 @@
         <!-- end section main -->
 
         <!-- start section customers -->
-        <section id="section_customers" class="sb hidden">
-          <div id="section_edit_customers"></div>
-          <div id="section_add_customers">
-            <div class="title">
-              Customers
-              <div id="customers_loading_status">- Processing...</div>
-              <i class="fal fa-users"></i>
-            </div>
-            <div id="add_customer" class="btn btn-green btn_add">
-              <i class="fas fa-plus"></i>
-            </div>
-            <div id="section_add_customer" class="hidden">
-              <div id="customer_add_status">- Processing...</div>
-              <input
-                type="text"
-                id="add_f_name"
-                placeholder="Fist Name"
-              /><br />
-              <input
-                type="text"
-                id="add_l_name"
-                placeholder="Last Name"
-              /><br />
-              <input
-                type="text"
-                id="add_nickname"
-                placeholder="Nickname"
-              /><br />
-              <input type="text" id="add_email" placeholder="Email" /><br />
-              <div id="submit_new_customer" class="btn btn-green">
-                Add New
-              </div>
-              <div id="customer_results"></div>
+        <section id="page_customers" class="sb hidden">
+          <div class="title">
+            Customers
+            <div id="customers_loading_status">- Processing...</div>
+            <i class="fal fa-users"></i>
+          </div>
+          <div id="add_customer" class="btn btn-green btn_add">
+            <i class="fas fa-plus"></i>
+          </div>
+          <div id="section_add_customer" class="hidden">
+            <div id="customer_add_status">- Processing...</div>
+            <input type="text" id="add_f_name" placeholder="Fist Name" /><br />
+            <input type="text" id="add_l_name" placeholder="Last Name" /><br />
+            <input type="text" id="add_nickname" placeholder="Nickname" /><br />
+            <input type="text" id="add_email" placeholder="Email" /><br />
+            <div id="submit_new_customer" class="btn btn-green">
+              Add New
             </div>
           </div>
+          <div id="customer_results"></div>
         </section>
+        <section id="page_edit_customer" class="hidden"></section>
         <!-- end section customers -->
 
         <!-- start section customergroups -->
-        <section id="section_customergroups" class="sb hidden">
+        <section id="page_customergroups" class="sb hidden">
           <div class="title">
             Customer Groups
             <div id="customergroups_loading_status">- Loading...</div>
@@ -101,9 +87,10 @@
           </div>
           <div id="customergroups_results"></div>
         </section>
+        <section id="page_edit_customergroup" class="hidden"></section>
         <!-- end section customergroups -->
 
-        <section id="section_restaurants" class="sb hidden">
+        <section id="page_restaurants" class="sb hidden">
           <div class="title">
             Restaurants
             <div id="restaurants_loading_status">- Loading...</div>
@@ -115,13 +102,13 @@
           <div id="restaurants_results"></div>
         </section>
 
-        <section id="section_orders" class="sb hidden">
+        <section id="page_orders" class="sb hidden">
           <div class="title">
             Orders <i class="fal fa-hand-holding-usd"></i>
           </div>
         </section>
 
-        <section id="section_about" class="sb hidden">
+        <section id="page_about" class="sb hidden">
           <div class="title">About <i class="fal fa-at"></i></div>
         </section>
       </section>

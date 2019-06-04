@@ -11,9 +11,9 @@ function getCustomerGroups($conn) {
     $handle= $conn->prepare($sql);
     /*$handle->bindParam('pid',$pid,PDO::PARAM_STR);*/
     $handle->execute();
-    //$query_results = $handle->fetchAll(PDO::FETCH_BOTH);
-    //echo json_encode($query_results); 
-
+    $query_results = $handle->fetchAll(PDO::FETCH_BOTH);
+    echo json_encode($query_results); 
+/*
     while ($row = $handle->fetch()){
       $str .= '<div class="btn_wrapper">';
       $str .= '<div data-id="' . $row['id'] . '" class="btn_edit">' . $row['name'] .'</div>';
@@ -22,7 +22,7 @@ function getCustomerGroups($conn) {
     }
 
     echo $str;
-
+*/
     $handle->closeCursor();	
 }
 

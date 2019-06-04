@@ -34,8 +34,10 @@ h1 {
   width: 100%;
 }
 
-.section_update_customer {
+.section_update_customer,
+#section_add_customer {
   text-align: center;
+  transition: all 1s;
 }
 
 #btn_update_customer {
@@ -57,7 +59,8 @@ h1 {
   color: #fff;
 }
 
-.section_update_customer input[type="text"] {
+.section_update_customer input[type="text"],
+#section_add_customer input[type="text"] {
   border-radius: 5px;
   margin: 5px;
   width: 50%;
@@ -75,35 +78,23 @@ h1 {
   padding: 20px;
 }
 
-#section_data {
-  display: none;
-  opacity: 0;
-  width: 100%;
-  max-width: 500px;
-  height: calc(100% - 65px);
-  transition: all 1s;
-}
-
-.show_section_data {
-  display: block !important;
-  opacity: 1 !important;
-}
-
 #section_header i {
   font-size: 25px;
 }
 
-#section_add_customer {
+#page_add_customer {
   opacity: 1;
   text-align: center;
+  transition: all 1s;
 }
 
-#section_add_customer input[type="text"] {
+#page_add_customer input[type="text"] {
   border-radius: 5px;
   margin: 5px;
   width: 50%;
   padding: 5px;
   border: 1px solid #555;
+  transition: all 1s;
 }
 
 #submit_new_customer {
@@ -118,12 +109,13 @@ h1 {
   visibility: hidden;
 }
 
-#section_main {
+#page_main {
   height: 100%;
   width: 100%;
   display: grid;
   grid-template-columns: 50% 50%;
   grid-template-rows: 35% 35% auto;
+  transition: all 1s;
 }
 
 .btn_about {
