@@ -4,9 +4,9 @@ include "init.php";
 
 $id = $_GET['id'];
 
-getCustomers($conn,$id);
+delCustomer($conn,$id);
 
-function getCustomers($conn,$id) {
+function delCustomer($conn,$id) {
     global $handle;
     $str = "";      
     $sql = "DELETE FROM `customers` WHERE id = :id";
