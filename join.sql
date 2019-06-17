@@ -1,0 +1,1 @@
+SELECT f_name, l_name, nickname FROM customers INNER JOIN g2c ON customers.id = g2c.user_id AND g2c.group_id = 2;

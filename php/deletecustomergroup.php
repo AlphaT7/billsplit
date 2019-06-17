@@ -4,21 +4,21 @@ include "init.php";
 
 $id = $_GET['id'];
 
-delCustomer($conn,$id);
+delCustomerGroup($conn,$id);
 
-function delCustomer($conn,$id) {
+function delCustomerGroup($conn,$id) {
     global $handle;
-    $sql = "DELETE FROM `customers` WHERE id = :id";
+    $sql = "DELETE FROM `groups` WHERE id = :id";
     $handle= $conn->prepare($sql);
     $handle->bindParam('id',$id,PDO::PARAM_STR);
     $handle->execute();
 
-    $sql = "DELETE FROM `g2c` WHERE customer_id = :id";
+    $sql = "DELETE FROM `g2c` WHERE group_id = :id";
     $handle= $conn->prepare($sql);
     $handle->bindParam('id',$id,PDO::PARAM_STR);
     $handle->execute();
 
-    echo "Customer Deleted!";
+    echo "Group Deleted!";
 
     $handle->closeCursor();	
 }

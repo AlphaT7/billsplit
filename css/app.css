@@ -38,14 +38,18 @@ h1 {
 #section_add_customer,
 #section_add_group,
 #section_update_customergroup,
-.section_update_customergroup {
+#section_add_restaurant,
+.section_update_customergroup,
+.section_update_restaurant {
   text-align: center;
   transition: all 1s;
 }
 
 #btn_update_customer,
 #btn_update_customergroup,
-#btn_delete_customergroup {
+#btn_delete_customergroup,
+#btn_update_restaurant,
+#btn_delete_restaurant {
   width: 50%;
   height: 50px;
   padding: 12px;
@@ -67,7 +71,8 @@ h1 {
 .section_update_customer input[type="text"],
 #section_add_customer input[type="text"],
 #section_add_group input[type="text"],
-.section_update_customergroup input[type="text"] {
+.section_update_customergroup input[type="text"],
+.section_update_restaurant_input[type="text"] {
   border-radius: 5px;
   margin: 5px;
   width: 50%;
@@ -105,7 +110,8 @@ h1 {
 }
 
 #submit_new_customer,
-#submit_new_group {
+#submit_new_group,
+#submit_new_restaurant {
   width: 50%;
   height: 50px;
   padding: 12px;

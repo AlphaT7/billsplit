@@ -1,9 +1,11 @@
 let page = page => {
+  console.log(page);
   let pages = [
     "page_main",
     "page_customers",
     "page_edit_customer",
     "page_edit_customergroup",
+    "page_edit_restaurant",
     "page_customergroups",
     "page_restaurants",
     "page_orders",
@@ -19,8 +21,7 @@ document.addEventListener("touchstart", function() {}, false); // needed for ios
 
 /* -- TABULATOR JS FUNCTIONS -- */
 
-var customergroup_tagged = "";
-var customergroup_untagged = "";
+var customergroupstatus = "";
 
 //Build Tabulator Tables
 var customerresults = new Tabulator("#customer_results", {
@@ -61,84 +62,54 @@ var customerresults = new Tabulator("#customer_results", {
   ]
 });
 
-var customergroup_tagged = new Tabulator("#customergroup_tagged", {
-  rowClick: function(e, row) {
-    tag_group(row.getCell("id").getValue());
-  },
-  layout: "fitColumns",
-  placeholder: "No Data Set",
-  columns: [
-    {
-      title: "ID",
-      field: "id",
-      sorter: "string",
-      visible: false
+let setInGroup = id => {
+  customergroupstatus = new Tabulator("#customergroup_statustable", {
+    rowClick: function(e, row) {
+      updateInGroup(
+        row.getCell("id").getValue(),
+        id,
+        row.getCell("ingroup").getValue()
+      ); // pass the customer id, group id and group status;
     },
-    {
-      title: "First",
-      field: "f_name",
-      sorter: "string",
-      headerFilter: "input",
-      headerFilterPlaceholder: "Filter"
-    },
-    {
-      title: "Last",
-      field: "l_name",
-      sorter: "string",
-      headerFilter: "input",
-      headerFilterPlaceholder: "Filter"
-    },
-    {
-      title: "Nickname",
-      field: "nickname",
-      sorter: "string",
-      headerFilter: "input",
-      headerFilterPlaceholder: "Filter"
-    }
-  ]
-});
-
-let getGroupUntagged = id => {
-  if (customergroup_untagged == "") {
-    customergroup_untagged = new Tabulator("#customergroup_untagged", {
-      rowClick: function(e, row) {
-        tag_group(row.getCell("id").getValue());
+    layout: "fitColumns",
+    placeholder: "No Data Set",
+    columns: [
+      {
+        title: "ID",
+        field: "id",
+        sorter: "string",
+        visible: false
       },
-      layout: "fitColumns",
-      placeholder: "No Data Set",
-      columns: [
-        {
-          title: "ID",
-          field: "id",
-          sorter: "string",
-          visible: false
-        },
-        {
-          title: "First",
-          field: "f_name",
-          sorter: "string",
-          headerFilter: "input",
-          headerFilterPlaceholder: "Filter"
-        },
-        {
-          title: "Last",
-          field: "l_name",
-          sorter: "string",
-          headerFilter: "input",
-          headerFilterPlaceholder: "Filter"
-        },
-        {
-          title: "Nickname",
-          field: "nickname",
-          sorter: "string",
-          headerFilter: "input",
-          headerFilterPlaceholder: "Filter"
-        }
-      ]
-    });
-  } else {
-    getCustomerGroupUntagged(id);
-  }
+      {
+        title: "First",
+        field: "f_name",
+        sorter: "string",
+        headerFilter: "input",
+        headerFilterPlaceholder: "Filter"
+      },
+      {
+        title: "Last",
+        field: "l_name",
+        sorter: "string",
+        headerFilter: "input",
+        headerFilterPlaceholder: "Filter"
+      },
+      {
+        title: "Nickname",
+        field: "nickname",
+        sorter: "string",
+        headerFilter: "input",
+        headerFilterPlaceholder: "Filter"
+      },
+      {
+        title: "In Group",
+        field: "ingroup",
+        align: "center",
+        formatter: "tickCross"
+      }
+    ]
+  });
+  getInGroup(id);
 };
 
 var customergroups_results = new Tabulator("#customergroups_results", {
@@ -168,7 +139,7 @@ var customergroups_results = new Tabulator("#customergroups_results", {
 var restaurants_results = new Tabulator("#restaurants_results", {
   rowClick: function(e, row) {
     getRestaurant(row.getCell("id").getValue());
-    page("page_edit_customer");
+    page("page_edit_restaurant");
   },
   layout: "fitColumns",
   placeholder: "No Data Set",
@@ -233,16 +204,30 @@ document.addEventListener("click", function(e) {
     document.querySelector("#section_add_group").classList.toggle("hidden");
   }
 
+  if (e.target && e.target.matches("#add_restaurant")) {
+    document
+      .querySelector("#section_add_restaurant")
+      .classList.toggle("hidden");
+  }
+
   if (e.target && e.target.matches("#submit_new_customer")) {
     addCustomer();
   }
 
   if (e.target && e.target.matches("#submit_new_group")) {
-    addCustomerGroup();
+    addGroup();
+  }
+
+  if (e.target && e.target.matches("#submit_new_restaurant")) {
+    addRestaurant();
   }
 
   if (e.target && e.target.matches("#btn_update_customergroup")) {
-    updateCustomerGroup(e.target.dataset.id);
+    updateGroup(e.target.dataset.id);
+  }
+
+  if (e.target && e.target.matches("#btn_update_restaurant")) {
+    updateRestaurant(e.target.dataset.id);
   }
 
   if (e.target && e.target.matches("#btn_delete_customergroup")) {
@@ -309,7 +294,6 @@ let getCustomer = id => {
       document.querySelector("#customers_loading_status").style.visibility =
         "hidden";
       let data = xmlhttp.responseText;
-
       document.querySelector("#page_edit_customer").innerHTML = data;
     }
   };
@@ -331,7 +315,6 @@ let getRestaurants = () => {
       document.querySelector("#restaurants_loading_status").style.visibility =
         "hidden";
       let data = xmlhttp.responseText;
-
       restaurants_results.setData(data);
     }
   };
@@ -355,7 +338,6 @@ let getCustomerGroups = () => {
         "#customergroups_loading_status"
       ).style.visibility = "hidden";
       let data = xmlhttp.responseText;
-
       customergroups_results.setData(data);
       //document.querySelector("#customergroups_results").innerHTML = data;
     }
@@ -380,14 +362,36 @@ let getCustomerGroup = id => {
         "#customergroups_loading_status"
       ).style.visibility = "hidden";
       let data = xmlhttp.responseText;
-      getGroupUntagged(id);
-      getGroupUntagged(id);
-
       document.querySelector("#page_edit_customergroup").innerHTML = data;
+      setInGroup(id);
     }
   };
   let timestamp = Date.now();
   let link = "./php/getcustomergroup.php?id=" + id + "&timestamp=" + timestamp;
+  xmlhttp.open("GET", link, true);
+  xmlhttp.send(null);
+};
+
+let getRestaurant = id => {
+  let xmlhttp;
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    /*  if (xmlhttp.readyState < 4) {
+      document.querySelector(
+        "#customergroups_loading_status"
+      ).style.visibility = "visible";
+    }*/
+    if (xmlhttp.readyState == 4) {
+      /*document.querySelector(
+        "#customergroups_loading_status"
+      ).style.visibility = "hidden";*/
+      let data = xmlhttp.responseText;
+      document.querySelector("#page_edit_restaurant").innerHTML = data;
+      //      setInGroup(id);
+    }
+  };
+  let timestamp = Date.now();
+  let link = "./php/getrestaurant.php?id=" + id + "&timestamp=" + timestamp;
   xmlhttp.open("GET", link, true);
   xmlhttp.send(null);
 };
@@ -427,7 +431,7 @@ let updateCustomer = id => {
   xmlhttp.send(null);
 };
 
-let updateCustomerGroup = id => {
+let updateGroup = id => {
   let xmlhttp;
   xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
@@ -446,7 +450,69 @@ let updateCustomerGroup = id => {
     "?id=" + id + "&group=" + document.querySelector("#groupname").value;
 
   let timestamp = Date.now();
-  let link = "./php/updatecustomergroup.php" + url + "&timestamp=" + timestamp;
+  let link = "./php/updategroup.php" + url + "&timestamp=" + timestamp;
+  xmlhttp.open("GET", link, true);
+  xmlhttp.send(null);
+};
+
+let updateInGroup = (customer_id, group_id, group_status) => {
+  let xmlhttp;
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    /*
+    if (xmlhttp.readyState < 4) {
+      document.querySelector("#customergroup_update_status").style.visibility =
+        "visible";
+    }
+    */
+    if (xmlhttp.readyState == 4) {
+      //document.querySelector("#customergroup_update_status").style.visibility =
+      //  "hidden";
+      let data = xmlhttp.responseText;
+      customergroupstatus.setData(data);
+    }
+  };
+  let changetype = group_status == "true" ? "del" : "add";
+  let url =
+    "?customer_id=" +
+    customer_id +
+    "&group_id=" +
+    group_id +
+    "&changetype=" +
+    changetype;
+  let timestamp = Date.now();
+  let link = "./php/updateingroup.php" + url + "&timestamp=" + timestamp;
+  xmlhttp.open("GET", link, true);
+  xmlhttp.setRequestHeader(
+    "Cache-Control",
+    "no-cache, no-store, must-revalidate"
+  );
+  xmlhttp.send(null);
+};
+
+let updateRestaurant = id => {
+  let xmlhttp;
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    /*
+    if (xmlhttp.readyState < 4) {
+      document.querySelector("#customergroup_update_status").style.visibility =
+        "visible";
+    }
+    */
+    if (xmlhttp.readyState == 4) {
+      //document.querySelector("#customergroup_update_status").style.visibility =
+      //  "hidden";
+      alert(xmlhttp.responseText);
+    }
+  };
+  let name = document.querySelector("#r_name").value;
+  let phone = document.querySelector("#r_phone").value;
+  let website = document.querySelector("#r_website").value;
+  let url =
+    "?id=" + id + "&name=" + name + "&phone=" + phone + "&website=" + website;
+  let timestamp = Date.now();
+  let link = "./php/updaterestaurant.php" + url + "&timestamp=" + timestamp;
   xmlhttp.open("GET", link, true);
   xmlhttp.send(null);
 };
@@ -485,7 +551,7 @@ let addCustomer = () => {
   xmlhttp.send(null);
 };
 
-let addCustomerGroup = () => {
+let addGroup = () => {
   let xmlhttp;
   xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
@@ -502,7 +568,29 @@ let addCustomerGroup = () => {
   let url = "?group=" + document.querySelector("#group2add").value;
 
   let timestamp = Date.now();
-  let link = "./php/addcustomergroup.php" + url + "&timestamp=" + timestamp;
+  let link = "./php/addgroup.php" + url + "&timestamp=" + timestamp;
+  xmlhttp.open("GET", link, true);
+  xmlhttp.send(null);
+};
+
+let addRestaurant = () => {
+  let xmlhttp;
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    /*if (xmlhttp.readyState < 4) {
+      document.querySelector("#group_add_status").style.visibility = "visible";
+    }*/
+    if (xmlhttp.readyState == 4) {
+      //document.querySelector("#group_add_status").style.visibility = "hidden";
+      let data = xmlhttp.responseText;
+      getRestaurants();
+      alert(data);
+    }
+  };
+  let url = "?restaurant=" + document.querySelector("#restaurant2add").value;
+
+  let timestamp = Date.now();
+  let link = "./php/addrestaurant.php" + url + "&timestamp=" + timestamp;
   xmlhttp.open("GET", link, true);
   xmlhttp.send(null);
 };
@@ -558,7 +646,7 @@ let deleteCustomerGroup = id => {
 
 /* -- XHR TABLE FUNCTIONS -- */
 
-let getCustomerGroupUntagged = () => {
+let getInGroup = id => {
   let xmlhttp;
   xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
@@ -572,14 +660,12 @@ let getCustomerGroupUntagged = () => {
       //document.querySelector("#customergroup_update_status").style.visibility = "hidden";
 
       let data = xmlhttp.responseText;
-      customergroup_untagged.setData(data);
+      customergroupstatus.setData(data);
     }
   };
 
   let timestamp = Date.now();
-  let link = "./php/getgroupuntagged.php?id=" + id + "&timestamp=" + timestamp;
+  let link = "./php/getingroup.php?id=" + id + "&timestamp=" + timestamp;
   xmlhttp.open("GET", link, true);
   xmlhttp.send(null);
 };
-
-let getCustomerGroupTagged = () => {};
