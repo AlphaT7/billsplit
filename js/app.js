@@ -22,6 +22,7 @@ document.addEventListener("touchstart", function() {}, false); // needed for ios
 /* -- TABULATOR JS FUNCTIONS -- */
 
 var customergroupstatus = "";
+var restaurantmenu = "";
 
 //Build Tabulator Tables
 var customerresults = new Tabulator("#customer_results", {
@@ -110,6 +111,49 @@ let setInGroup = id => {
     ]
   });
   getInGroup(id);
+};
+
+let setRestaurantMenu = id => {
+  restaurantmenu = new Tabulator("#restaurant_table", {
+    rowClick: function(e, row) {
+      updateInGroup(
+        row.getCell("id").getValue(),
+        id,
+        row.getCell("ingroup").getValue()
+      ); // pass the customer id, group id and group status;
+    },
+    layout: "fitColumns",
+    placeholder: "No Data Set",
+    columns: [
+      {
+        title: "ID",
+        field: "restaurant_id",
+        sorter: "string",
+        visible: false
+      },
+      {
+        title: "ItemID",
+        field: "item_id",
+        sorter: "string",
+        visible: false
+      },
+      {
+        title: "Item",
+        field: "item",
+        sorter: "string",
+        headerFilter: "input",
+        headerFilterPlaceholder: "Item"
+      },
+      {
+        title: "Price",
+        field: "price",
+        sorter: "string",
+        headerFilter: "input",
+        headerFilterPlaceholder: "Price"
+      }
+    ]
+  });
+  getMenuItems(id);
 };
 
 var customergroups_results = new Tabulator("#customergroups_results", {
@@ -387,11 +431,38 @@ let getRestaurant = id => {
       ).style.visibility = "hidden";*/
       let data = xmlhttp.responseText;
       document.querySelector("#page_edit_restaurant").innerHTML = data;
-      //      setInGroup(id);
+      setRestaurantMenu(id);
     }
   };
   let timestamp = Date.now();
   let link = "./php/getrestaurant.php?id=" + id + "&timestamp=" + timestamp;
+  xmlhttp.open("GET", link, true);
+  xmlhttp.send(null);
+};
+
+let getMenuItems = restaurant_id => {
+  let xmlhttp;
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    /*  if (xmlhttp.readyState < 4) {
+      document.querySelector(
+        "#customergroups_loading_status"
+      ).style.visibility = "visible";
+    }*/
+    if (xmlhttp.readyState == 4) {
+      /*document.querySelector(
+        "#customergroups_loading_status"
+      ).style.visibility = "hidden";*/
+      let data = xmlhttp.responseText;
+      restaurantmenu.setData(data);
+    }
+  };
+  let timestamp = Date.now();
+  let link =
+    "./php/getmenuitems.php?restaurant_id=" +
+    restaurant_id +
+    "&timestamp=" +
+    timestamp;
   xmlhttp.open("GET", link, true);
   xmlhttp.send(null);
 };

@@ -25,6 +25,7 @@ function getRestaurant($conn,$id) {
       $str .= '<div id="btn_update_restaurant"  data-id="' . $id . '" class="btn btn-green">Submit</div>';
       $str .= '<div id="btn_delete_restaurant"  data-id="' . $id . '"  data-name="' . $row["name"] . '" class="btn btn-red">Delete</div>';
       $str .= '</div>';
+      $str .= '<div id="restaurant_table"></div>';
     }
 
     echo $str;
