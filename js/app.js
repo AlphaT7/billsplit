@@ -9,6 +9,7 @@ let page = page => {
     "page_customergroups",
     "page_restaurants",
     "page_orders",
+    "page_edit_orders",
     "page_about"
   ];
   for (let i = 0; i < pages.length; i++) {
@@ -204,6 +205,12 @@ var restaurants_results = new Tabulator("#restaurants_results", {
   ]
 });
 
+/* -- FOOPICKER DATE FUNCTIONS -- */
+
+var datepicker = new FooPicker({
+  id: "orderdate"
+});
+
 /* -- BUTTON EVENTS -- */
 
 // Get the parent DIV, add click listener...
@@ -252,6 +259,10 @@ document.addEventListener("click", function(e) {
     document
       .querySelector("#section_add_restaurant")
       .classList.toggle("hidden");
+  }
+
+  if (e.target && e.target.matches("#add_order")) {
+    document.querySelector("#section_add_order").classList.toggle("hidden");
   }
 
   if (e.target && e.target.matches("#submit_new_customer")) {
@@ -662,6 +673,35 @@ let addRestaurant = () => {
 
   let timestamp = Date.now();
   let link = "./php/addrestaurant.php" + url + "&timestamp=" + timestamp;
+  xmlhttp.open("GET", link, true);
+  xmlhttp.send(null);
+};
+
+let addOrder = () => {
+  let xmlhttp;
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState < 4) {
+      //document.querySelector("#customer_add_status").style.visibility = "visible";
+    }
+    if (xmlhttp.readyState == 4) {
+      //document.querySelector("#customer_add_status").style.visibility = "hidden";
+      let data = xmlhttp.responseText;
+      getCustomers();
+    }
+  };
+  let url =
+    "?f_name=" +
+    document.querySelector("#add_f_name").value +
+    "&l_name=" +
+    document.querySelector("#add_l_name").value +
+    "&nickname=" +
+    document.querySelector("#add_nickname").value +
+    "&email=" +
+    document.querySelector("#add_email").value;
+
+  let timestamp = Date.now();
+  let link = "./php/addcustomer.php" + url + "&timestamp=" + timestamp;
   xmlhttp.open("GET", link, true);
   xmlhttp.send(null);
 };

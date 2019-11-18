@@ -6,6 +6,7 @@
     <title>The Pizza App</title>
     <link rel="stylesheet" href="css/tabulator_bulma.min.css" type="text/css" />
     <link rel="stylesheet" href="css/all.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/foopicker.css" type="text/css" />
     <link rel="stylesheet" href="css/app.css" type="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
@@ -125,16 +126,28 @@
           <div class="title">
             Orders <i class="fal fa-hand-holding-usd"></i>
           </div>
+          <div id="section_add_order" class="hidden">
+            <div id="order_add_status">- Processing...</div>
+            <input type="text" id="orderdate" /><br />
+            <div id="submit_new_restaurant" class="btn btn-green">
+              Add New
+            </div>
+          </div>
         </section>
+        <section id="page_edit_orders" class="hidden"></section>
 
         <section id="page_about" class="sb hidden">
           <div class="title">About <i class="fal fa-at"></i></div>
         </section>
+        <div id="add_order" class="btn btn-green btn_add">
+          <i class="fas fa-plus"></i>
+        </div>
       </section>
       <!-- end section inner -->
     </section>
 
     <script type="text/javascript" src="js/tabulator.min.js"></script>
+    <script type="text/javascript" src="js/foopicker.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
   </body>
 </html>
